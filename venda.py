@@ -1,16 +1,22 @@
-# venda.py
+
 from datetime import datetime
 from produto import Produto
 from item_venda import ItemVenda
-from pagamento import Pagamento   # <-- NOVO
+from pagamento import Pagamento
 
 
 class Venda:
+  
+    quantidade_vendas = 0
+
     def __init__(self):
         self.data = datetime.now()
         self.valor_total = 0.0
         self.itens = []
-        self.pagamento = None      # <-- NOVO: será definido no finalizar()
+        self.pagamento = None
+
+
+        Venda.quantidade_vendas += 1
 
     def adicionar_item(self, produto: Produto, quant: int):
         """Tenta adicionar um item à venda se houver estoque."""
@@ -20,7 +26,8 @@ class Venda:
             print(f"Item '{produto.descricao}' adicionado à venda.")
             self.calcular_total()
         else:
-            print(f"ERRO: Estoque insuficiente para '{produto.descricao}'. Disponível: {produto.estoque}")
+            print(f"ERRO: Estoque insuficiente para '{produto.descricao}'. "
+                  f"Disponível: {produto.estoque}")
 
     def remover_item(self, produto: Produto):
         """Remove um item da venda e devolve a quantidade ao estoque."""
@@ -41,21 +48,9 @@ class Venda:
     def finalizar(self, pagamento):
         self.calcular_total()
         pagamento.valor_base = self.valor_total
-        valor_final = pagamento.calcular_valor_final()
-
-        print("\n--- RECIBO ---")
-        for item in self.itens:
-            print(item)
-        print(f"Valor base:  R$ {self.valor_total:.2f}")
-        print(f"Pagamento:   {pagamento.__class__.__name__}")
-        print(f"Valor final: R$ {valor_final:.2f}")
-        return valor_final
-
-        self.calcular_total()                 # garante valor_total atualizado
-        pagamento.valor_base = self.valor_total  # injeta o valor base no pagamento
         self.pagamento = pagamento
 
-        valor_final = pagamento.calcular_valor_final()  # <-- POLIMORFISMO
+        valor_final = pagamento.calcular_valor_final()  # polimorfismo
 
         print("\n" + "=" * 55)
         print("           RECIBO DA VENDA")
@@ -72,7 +67,8 @@ class Venda:
         return valor_final
 
     def __str__(self):
-        recibo = f"--- VENDA REALIZADA EM: {self.data.strftime('%d/%m/%Y %H:%M:%S')} ---\n"
+        recibo = (f"--- VENDA REALIZADA EM: "
+                  f"{self.data.strftime('%d/%m/%Y %H:%M:%S')} ---\n")
         if not self.itens:
             recibo += "Nenhum item vendido.\n"
         else:
