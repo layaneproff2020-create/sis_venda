@@ -1,10 +1,9 @@
-from datetime import date, datetime
+from datetime import datetime
 
-class Movimento :
+class Movimentacao:
+    def __init__(self, descricao: str, data: datetime = None):
+        self._descricao = descricao
+        self._data = data or datetime.now()
 
-  def__init__(self,descricao:str,data:datetime=.now()):
-  self._descricao = descricao
-  self._data = date # type: ignore
-
-  def formatar(self):
-     return f"{self._data.strtime('%d/%m/%y %H:%M')} - {self._descricao}"
+    def formatar(self):
+        return f"{self._data.strftime('%d/%m/%y %H:%M')} - {self._descricao}"
