@@ -76,3 +76,22 @@ class Venda:
                 recibo += f"{item}\n"
         recibo += f"VALOR TOTAL: R$ {self.valor_total:.2f}"
         return recibo
+
+def resumo(self):
+    """Retorna dict com os dados do recibo (para a interface exibir)."""
+    self.calcular_total()
+    valor_final = (self.pagamento.calcular_valor_final()
+                   if self.pagamento else self.valor_total)
+    return {
+        "data": self.data.strftime('%d/%m/%Y %H:%M:%S'),
+        "itens": [
+            {"descricao": it.produto.descricao,
+             "preco": it.produto.preco_unitario,
+             "qtd": it.quantidade,
+             "subtotal": it.calcular_subtotal()}
+            for it in self.itens
+        ],
+        "valor_base": self.valor_total,
+        "modalidade": self.pagamento.__class__.__name__ if self.pagamento else "-",
+        "valor_final": valor_final,
+    }
